@@ -1,31 +1,26 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getFilter } from 'redux/selectors';
-import * as contactsActions from 'redux/actions';
+import { getFilter } from '../../redux/contacts/contacts-selectors';
+import * as actions from '../../redux/contacts/contacts-actions';
 
-import PropTypes from 'prop-types';
 import s from './Filter.module.css';
+import TextField from '@material-ui/core/TextField';
 
 const Filter = () => {
   const value = useSelector(getFilter);
   const dispatch = useDispatch();
 
   return (
-    <label className={s.filterLabel}>
-      Find contacts by name
-      <input
-        className={s.filterInput}
-        type="text"
-        value={value}
-        onChange={e => dispatch(contactsActions.changeFilter(e.target.value))}
-      />
-    </label>
+    <TextField
+      id="outlined-search"
+      type="search"
+      variant="outlined"
+      label="Find contacts by name"
+      value={value}
+      name="name"
+      className={s.input}
+      onChange={e => dispatch(actions.changeFilter(e.target.value))}
+    />
   );
-};
-
-Filter.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
 };
 
 export default Filter;

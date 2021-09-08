@@ -1,42 +1,41 @@
-import s from './ContactsList.module.css';
-import React from 'react';
-import PropTypes from 'prop-types';
-import ContactListItem from './ContactListItem/ContactListItem';
-import { useSelector, useDispatch } from 'react-redux';
-import contactsOperations from '../../redux/operations';
-import { getVisibleContacts } from '../../redux/selectors';
 import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getFilteredContacts } from '../../redux/contacts/contacts-selectors';
+import operations from '../../redux/contacts/contacts-operations';
 
-export default function ContactList() {
+import s from './ContactsList.module.css';
+import Button from '@material-ui/core/Button';
+
+function ContactList() {
+  const contacts = useSelector(getFilteredContacts);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(contactsOperations.fetchContacts());
-  }, [dispatch]);
-  const contacts = useSelector(getVisibleContacts);
+  useEffect(() => dispatch(operations.fetchContacts()), [dispatch]);
 
-  const onDeleteContact = id => dispatch(contactsOperations.deleteContact(id));
+  const onDeleteContact = id => dispatch(operations.deleteContact(id));
 
   return (
     <ul className={s.list}>
-      {contacts.map(({ id, name, number }) => (
-        <ContactListItem
-          key={id}
-          contactName={name}
-          contactNumber={number}
-          onClickDeleteContact={() => onDeleteContact(id)}
-        />
-      ))}
+      {contacts.map(({ id, name, number }) => {
+        return (
+          <li key={id} className={s.listItem}>
+            <span className={s.name}>{name}:</span>
+            <span className={s.number}>{number}</span>
+
+            <Button
+              variant="contained"
+              color="default"
+              size="small"
+              onClick={() => onDeleteContact(id)}
+              className={s.button}
+            >
+              Delete
+            </Button>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }),
-  ),
-};
+export default ContactList;
